@@ -16,10 +16,14 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+/**
+ * 日志打印对象
+ */
 final class LoggerPrinter implements Printer {
-
+  //日志输出默认tag
   private static final String DEFAULT_TAG = "PRETTYLOGGER";
 
+  //日志输出级别
   private static final int DEBUG = 3;
   private static final int ERROR = 6;
   private static final int ASSERT = 7;
@@ -45,7 +49,7 @@ final class LoggerPrinter implements Printer {
   private static final int MIN_STACK_OFFSET = 3;
 
   /**
-   * Drawing toolbox
+   * 绘制日志盒子的工具字符串
    */
   private static final char TOP_LEFT_CORNER = '╔';
   private static final char BOTTOM_LEFT_CORNER = '╚';
@@ -63,42 +67,41 @@ final class LoggerPrinter implements Printer {
    */
   private String tag;
 
-  /**
-   * Localize single tag and method count for each thread
-   */
+  //ThreadLocal，线程局部变量，为每一个使用该变量的线程提供一个变量值的副本，每一个线程都可以独立地改变
+  //自己的副本，而不会和其它线程的副本冲突
   private final ThreadLocal<String> localTag = new ThreadLocal<>();
   private final ThreadLocal<Integer> localMethodCount = new ThreadLocal<>();
 
-  /**
-   * It is used to determine log settings such as method count, thread info visibility
-   */
+  //用于决定如方法个数，线程信息是否可见
   private final Settings settings = new Settings();
 
   public LoggerPrinter() {
     init(DEFAULT_TAG);
   }
 
-  /**
-   * It is used to change the tag
-   *
-   * @param tag is the given string which will be used in Logger
-   */
-  @Override public Settings init(String tag) {
+  @Override
+  public Settings init(String tag) {
+    //参数检查，抛出异常
     if (tag == null) {
       throw new NullPointerException("tag may not be null");
     }
     if (tag.trim().length() == 0) {
       throw new IllegalStateException("tag may not be empty");
     }
+    //设置日志输出tag
     this.tag = tag;
+
     return settings;
   }
 
-  @Override public Settings getSettings() {
+  @Override
+  public Settings getSettings() {
     return settings;
   }
 
-  @Override public Printer t(String tag, int methodCount) {
+  @Override
+  public Printer t(String tag, int methodCount) {
+    //为该线程中的LoggerPrinter对象设置日志输出tag和方法个数methodCount
     if (tag != null) {
       localTag.set(tag);
     }
@@ -106,11 +109,13 @@ final class LoggerPrinter implements Printer {
     return this;
   }
 
-  @Override public void d(String message, Object... args) {
+  @Override
+  public void d(String message, Object... args) {
     log(DEBUG, null, message, args);
   }
 
-  @Override public void d(Object object) {
+  @Override
+  public void d(Object object) {
     String message;
     if (object.getClass().isArray()) {
       message = Arrays.deepToString((Object[]) object);
@@ -240,17 +245,20 @@ final class LoggerPrinter implements Printer {
     logBottomBorder(priority, tag);
   }
 
-  @Override public void resetSettings() {
+  @Override
+  public void resetSettings() {
     settings.reset();
   }
 
   /**
-   * This method is synchronized in order to avoid messy of logs' order.
+   *为了避免日志的顺序混乱，这个方法是synchronized的
    */
   private synchronized void log(int priority, Throwable throwable, String msg, Object... args) {
+    //如果决定不输出日志，则返回
     if (settings.getLogLevel() == LogLevel.NONE) {
       return;
     }
+
     String tag = getTag();
     String message = createMessage(msg, args);
     log(priority, tag, message, throwable);
@@ -354,6 +362,7 @@ final class LoggerPrinter implements Printer {
   /**
    * @return the appropriate tag based on local or global
    */
+
   private String getTag() {
     String tag = localTag.get();
     if (tag != null) {

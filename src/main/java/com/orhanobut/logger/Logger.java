@@ -1,38 +1,34 @@
 package com.orhanobut.logger;
 
 /**
- * Logger is a wrapper of {@link android.util.Log}
- * But more pretty, simple and powerful
+ * Logger是android.util.Log的一个包装，但是它更好，更简单和更强大
  */
 public final class Logger {
+  //日志输出级别
   public static final int DEBUG = 3;
   public static final int ERROR = 6;
   public static final int ASSERT = 7;
   public static final int INFO = 4;
   public static final int VERBOSE = 2;
   public static final int WARN = 5;
-
+  //日志输出默认tag
   private static final String DEFAULT_TAG = "PRETTYLOGGER";
-
+  //打印日志类
   private static Printer printer = new LoggerPrinter();
 
-  //no instance
+  //没有实例
   private Logger() {
   }
 
   /**
-   * It is used to get the settings object in order to change settings
-   *
-   * @return the settings object
+   * 为了修改设置，获取Settings对象
    */
   public static Settings init() {
     return init(DEFAULT_TAG);
   }
 
   /**
-   * It is used to change the tag
-   *
-   * @param tag is the given string which will be used in Logger as TAG
+   * 改变日志输出tag
    */
   public static Settings init(String tag) {
     printer = new LoggerPrinter();
@@ -59,6 +55,9 @@ public final class Logger {
     printer.log(priority, tag, message, throwable);
   }
 
+  /**
+   * 输出debug日志
+   */
   public static void d(String message, Object... args) {
     printer.d(message, args);
   }

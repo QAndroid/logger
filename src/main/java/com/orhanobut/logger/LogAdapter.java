@@ -1,5 +1,8 @@
 package com.orhanobut.logger;
 
+/**
+ * 日志适配器接口，定义了日志适配器的接口方法
+ */
 public interface LogAdapter {
   void d(String tag, String message);
 

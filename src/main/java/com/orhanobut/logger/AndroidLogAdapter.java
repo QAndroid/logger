@@ -2,6 +2,9 @@ package com.orhanobut.logger;
 
 import android.util.Log;
 
+/**
+ * Android日志适配器，使用Android的Log进行日志输出
+ */
 class AndroidLogAdapter implements LogAdapter {
   @Override public void d(String tag, String message) {
     Log.d(tag, message);
